@@ -10,7 +10,7 @@ public class MyCalendar {
         return false;
     }
 
-    public MyTreeMap getCalendar(){
+    public MyTreeMap<Integer, Integer> getCalendar(){
         return this.calendar;
     }
 }
