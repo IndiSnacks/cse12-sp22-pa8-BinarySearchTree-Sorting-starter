@@ -15,9 +15,9 @@ public class MyCalendar {
             return true;
         }
         else if(calendar.ceilingKey(start) != null || calendar.floorKey(start) != null){    //one event 
-            if(calendar.ceilingKey(start) != null){                                         //event before
-                int celing = calendar.ceilingKey(start);
-                if(calendar.get(celing) > start){
+            if(calendar.ceilingKey(start) != null){                                         //event after
+                int ceilingKey = calendar.ceilingKey(start);
+                if(ceilingKey < end){
                     return false;
                 }
                 else{
@@ -25,9 +25,9 @@ public class MyCalendar {
                     return true;
                 }
             }
-            else{                                                                           //event after
+            else{                                                                           //event before
                 int floorKey = calendar.floorKey(start);
-                if(end > floorKey){
+                if(start < calendar.get(floorKey)){
                     return false;
                 }
                 else{
@@ -39,7 +39,7 @@ public class MyCalendar {
         else{                                                                               //event before & after
             int ceilingKey = calendar.ceilingKey(start);
             int floorKey = calendar.floorKey(start);
-            if(end > floorKey || calendar.get(ceilingKey) > start){
+            if(ceilingKey < end || start < calendar.get(floorKey)){
                 return false;
             }
             else{

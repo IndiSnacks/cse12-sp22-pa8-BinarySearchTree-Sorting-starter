@@ -98,26 +98,28 @@ public class MyBST<K extends Comparable<K>,V>{
 
         MyBSTNode<K,V> current = root;
 
-        while(current != null){
-            if(current.getKey().compareTo(key) > 0){
-                if(current.getLeft() == null){
-                    return null;
-                }
-                current = current.getLeft();
-            } 
-            else{
-                if(current.getRight() == null){
-                    return null;
-                }
+        while(current !=null){
+            if(current.getKey().compareTo(key) < 0){
                 current = current.getRight();
             }
-
-            if(current.getKey() == key){
+            else if(current.getKey().compareTo(key) > 0){
+                current = current.getLeft();
+            }
+            else{
                 break;
             }
         }
 
-        return current.getValue();
+        if(current == null){
+            return null;
+        }
+
+        if(current.getKey().compareTo(key) != 0){
+            return null;
+        }
+        else{
+            return current.getValue();
+        }
     }
 
     public V remove(K key){
