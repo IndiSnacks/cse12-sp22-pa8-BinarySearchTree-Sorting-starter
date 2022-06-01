@@ -5,28 +5,200 @@ public class MyBST<K extends Comparable<K>,V>{
     MyBSTNode<K,V> root = null;
     int size = 0;
 
+    /**
+     * 
+     * @return
+     */
     public int size(){
         return size;
     }
 
+    /**
+     * 
+     * @param key
+     * @param value
+     * @return
+     */
     public V insert(K key, V value){
-        // TODO
-        return null;
+        if(key == null){
+            throw new NullPointerException();
+        }
+
+        if(size == 0){
+            MyBSTNode<K,V> newNode = new MyBSTNode<K,V>(key, value, null);
+            root = newNode;
+            size++;
+            return value;
+        }
+        
+        MyBSTNode<K, V> current = root;
+        if(search(key) != null){
+            while(current.key != key){
+                if(current.key.compareTo(key) > 0){
+                    if(current.getLeft() != null){
+                        current = current.getLeft();
+                    }
+                    else{
+                        current = current.getRight();
+                    }
+                }
+                else{
+                    if(current.getRight() != null){
+                        current = current.getRight();
+                    }
+                    else{
+                        current = current.getLeft();
+                    }
+                }
+            }
+            V orginalVal = current.getValue();
+            current.setValue(value); 
+            return orginalVal;
+        }
+        else{
+            while(current != null){
+                if(current.key.compareTo(key) > 0){
+                    if(current.getLeft() == null){
+                        MyBSTNode<K, V> newNode = new MyBSTNode<K,V>(key, value, current);
+                        current.setLeft(newNode);
+                        break;
+                    }
+                    else{
+                        current = current.getLeft();
+                    }
+                }
+                else{
+                    if(current.getRight() == null){
+                        MyBSTNode<K, V> newNode = new MyBSTNode<K,V>(key, value, current);
+                        current.setRight(newNode);
+                        break;
+                    }
+                    else{
+                        current = current.getRight();
+                    }
+                }
+            }
+            size++;
+            return value;
+        }
+
+
     }
 
+    /**
+     * 
+     * @param key
+     * @return
+     */
     public V search(K key){
-        // TODO
-        return null;
+
+        if(key == null){
+            return null;
+        }
+
+        MyBSTNode<K,V> current = root;
+
+        while(current != null){
+            if(current.getKey().compareTo(key) > 0){
+                if(current.getLeft() == null){
+                    return null;
+                }
+                current = current.getLeft();
+            } 
+            else{
+                if(current.getRight() == null){
+                    return null;
+                }
+                current = current.getRight();
+            }
+
+            if(current.getKey() == key){
+                break;
+            }
+        }
+
+        return current.getValue();
     }
 
     public V remove(K key){
-        // TODO
-        return null;
+
+        if(search(key) == null){
+            return null;
+        }
+
+        MyBSTNode<K,V> current = root;
+        while(current.key != key){
+            if(current.key.compareTo(key) > 0){
+                if(current.getLeft() != null){
+                    current = current.getLeft();
+                }
+                else{
+                    current = current.getRight();
+                }
+            }
+            else{
+                if(current.getRight() != null){
+                    current = current.getRight();
+                }
+                else{
+                    current = current.getLeft();
+                }
+            }
+        }
+
+        V rtnVal = current.getValue();
+
+        
+        if(current.getLeft() == null && current.getRight() == null){
+            if(current.getParent().getLeft() == current){
+                current.getParent().setLeft(null);
+            }
+            else{
+                current.getParent().setRight(null);
+            }
+        }
+        else if(current.getLeft() == null || current.getRight() == null){
+            if(current.getRight() != null){
+                if(current.getParent().getLeft() == current){
+                    current.getParent().setLeft(current.getRight());
+                }
+                else{
+                    current.getParent().setRight(current.getRight());
+                }
+            }
+            else{
+                if(current.getParent().getLeft() == current){
+                    current.getParent().setLeft(current.getLeft());
+                }
+                else{
+                    current.getParent().setRight(current.getLeft());
+                } 
+            }
+        }
+        else{
+            MyBSTNode<K,V> newNode = current.successor();
+            remove(current.successor().getKey());
+            current = newNode;
+        }
+
+        size--;
+        return rtnVal;
     }
     
     public ArrayList<MyBSTNode<K, V>> inorder(){
-        // TODO
-        return null;
+        ArrayList<MyBSTNode<K,V>> rtnList = new ArrayList<>();
+        MyBSTNode<K,V> current = root;
+        while(current.predecessor() != null){
+            current = current.predecessor();
+        }
+
+        while(current.successor() != null){
+            rtnList.add(current);
+            current = current.successor();
+        }
+
+        rtnList.add(current);
+        return rtnList;
     }
 
     static class MyBSTNode<K,V>{
@@ -141,14 +313,14 @@ public class MyBST<K extends Comparable<K>,V>{
          * @return the successor of current node object
          */
         public MyBSTNode<K, V> successor(){
-            if(this.getRight() != null){
-                MyBSTNode<K,V> curr = this.getRight();
-                while(curr.getLeft() != null){
-                    curr = curr.getLeft();
+            if(this.getRight() != null){ //checkes if this node has a right node
+                MyBSTNode<K,V> curr = this.getRight(); // if there is a right node  
+                while(curr.getLeft() != null){         //sets the current seccosor to the right node
+                    curr = curr.getLeft(); //sets the current seccosor to the furtherthest left
                 }
-                return curr;
+                return curr; //returs the node
             }
-            else{
+            else{ //if there is a right node we need to go up the the tree
                 MyBSTNode<K,V> parent = this.getParent();
                 MyBSTNode<K,V> curr = this;
                 while(parent != null && curr == parent.getRight()){
@@ -159,9 +331,27 @@ public class MyBST<K extends Comparable<K>,V>{
             }
         }
 
+        /**
+         * 
+         * @return
+         */
         public MyBSTNode<K, V> predecessor(){
-            // TODO
-            return null;
+            if(this.getLeft() != null){ 
+                MyBSTNode<K,V> curr = this.getLeft(); 
+                while(curr.getRight() != null){         
+                    curr = curr.getRight(); 
+                }
+                return curr; 
+            }
+            else{ 
+                MyBSTNode<K,V> parent = this.getParent();
+                MyBSTNode<K,V> curr = this;
+                while(parent != null && curr == parent.getLeft()){
+                    curr = parent;
+                    parent = parent.getParent();
+                }
+                return parent;
+            }
         }
 
         /** This method compares if two node objects are equal.
